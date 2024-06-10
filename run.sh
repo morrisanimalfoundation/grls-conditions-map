@@ -3,7 +3,7 @@
 # Should provide the directory where this script lives in most cases.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-IMAGE_NAME="registry.gitlab.com/morrisanimalfoundation/prefectetl/no-framework:raritan"
+IMAGE_NAME="registry.gitlab.com/morrisanimalfoundation/grls-conditions-map"
 
 # Build the image with our special build args.
 # These matter more on Jenkins, but need to be placeheld anyway.
