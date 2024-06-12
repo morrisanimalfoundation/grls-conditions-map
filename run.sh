@@ -11,4 +11,4 @@ docker image build -t $IMAGE_NAME --build-arg USER_ID=$(id -u ${USER}) .
 
 # Run the container in a disposable manner.
 # Add a volume to the current working dir.
-docker run --rm -it -u jenkins -v $SCRIPT_DIR:/workspace $IMAGE_NAME bash
+winpty docker run --rm -it -u jenkins -v $SCRIPT_DIR:/workspace $IMAGE_NAME bash
