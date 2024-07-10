@@ -7,6 +7,7 @@ library(readr)
 library(geojsonio)
 library(zipcodeR)
 library(stringr)
+library(htmlwidgets)
 
 #datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
 
@@ -128,4 +129,4 @@ m <- leaflet() %>%
 m
 
 #Save widget
-saveWidget(conditions_map, file = "/workspace/data/output/conditions_map.html")
+saveWidget(m, file = "./data/output/conditions_map.html")
