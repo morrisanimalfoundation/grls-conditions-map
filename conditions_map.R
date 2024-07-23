@@ -46,8 +46,12 @@ states_atopy <- geojson_read("https://rstudio.github.io/leaflet/json/us-states.g
 atopy_states <- merge(states_atopy, atopy_count, by = "name", all.x = T)
 atopy_states$count[is.na(atopy_states$count)] <- 0
 
+#Add count data to shape file
+states_atopy$count <- atopy_states$count
+states_atopy$count[is.na(states_atopy$count)] <- 0
+
 #Create color scheme for atopy
-paletteNum_atopy <- colorNumeric('Blues', domain = atopy_states$count)
+paletteNum_atopy <- colorNumeric('Blues', domain = states_atopy$count)
 
 ### BACTERIAL DERMATITIS
 
@@ -79,8 +83,12 @@ states_bacterial_dermatitis <- geojson_read("https://rstudio.github.io/leaflet/j
 bacterial_dermatitis_states <- merge(states_bacterial_dermatitis, bacterial_dermatitis_count, by = "name", all.x = T)
 bacterial_dermatitis_states$count[is.na(bacterial_dermatitis_states$count)] <- 0
 
-#Create color scheme for atopy
-paletteNum_bacterial_dermatitis <- colorNumeric('YlOrRd', domain = bacterial_dermatitis_states$count)
+#Add count data to shape file
+states_bacterial_dermatitis$count <- bacterial_dermatitis_states$count
+states_bacterial_dermatitis$count[is.na(states_bacterial_dermatitis$count)] <- 0
+
+#Create color scheme for bacterial dermatitis
+paletteNum_bacterial_dermatitis <- colorNumeric('YlOrRd', domain = states_bacterial_dermatitis$count)
 
 ### CONTACT DERMATITIS
 
@@ -112,8 +120,12 @@ states_contact_dermatitis <- geojson_read("https://rstudio.github.io/leaflet/jso
 contact_dermatitis_states <- merge(states_contact_dermatitis, contact_dermatitis_count, by = "name", all.x = T)
 contact_dermatitis_states$count[is.na(contact_dermatitis_states$count)] <- 0
 
+#Add count data to shape file
+states_contact_dermatitis$count <- contact_dermatitis_states$count
+states_contact_dermatitis$count[is.na(states_contact_dermatitis$count)] <- 0
+
 #Create color scheme for contact dermatitis
-paletteNum_contact_dermatitis <- colorNumeric('Greens', domain = contact_dermatitis_states$count)
+paletteNum_contact_dermatitis <- colorNumeric('Greens', domain = states_contact_dermatitis$count)
 
 ### DERMATITIS
 
@@ -145,8 +157,12 @@ states_dermatitis <- geojson_read("https://rstudio.github.io/leaflet/json/us-sta
 dermatitis_states <- merge(states_dermatitis, dermatitis_count, by = "name", all.x = T)
 dermatitis_states$count[is.na(dermatitis_states$count)] <- 0
 
+#Add count data to shape file
+states_dermatitis$count <- dermatitis_states$count
+states_dermatitis$count[is.na(states_dermatitis$count)] <- 0
+
 #Create color scheme for dermatitis
-paletteNum_dermatitis <- colorNumeric('viridis', domain = dermatitis_states$count)
+paletteNum_dermatitis <- colorNumeric('viridis', domain = states_dermatitis$count)
 
 ### HOT SPOTS
 
@@ -178,8 +194,12 @@ states_hot_spots <- geojson_read("https://rstudio.github.io/leaflet/json/us-stat
 hot_spots_states <- merge(states_hot_spots, hot_spots_count, by = "name", all.x = T)
 hot_spots_states$count[is.na(hot_spots_states$count)] <- 0
 
+#Add count data to shape file
+states_hot_spots$count <- hot_spots_states$count
+states_hot_spots$count[is.na(states_hot_spots$count)] <- 0
+
 #Create color scheme for hot spots
-paletteNum_hot_spots <- colorNumeric('Oranges', domain = hot_spots_states$count)
+paletteNum_hot_spots <- colorNumeric('Oranges', domain = states_hot_spots$count)
 
 #Create labels for map
 ##ATOPY
@@ -216,7 +236,7 @@ labels_hot_spots <- sprintf(
 conditions_map <- leaflet() %>%
   addTiles() %>%
   setView(lng = -96.25, lat = 39.50, zoom = 4) %>%
-  addPolygons(data = atopy_states,
+  addPolygons(data = states_atopy,
               color = "white",
               weight = 1,
               smoothFactor = .3,
@@ -231,7 +251,7 @@ conditions_map <- leaflet() %>%
                 color = "dodgerblue"),
               group = "Atopy"
   ) %>%
-  addPolygons(data = bacterial_dermatitis_states,
+  addPolygons(data = states_bacterial_dermatitis,
               color = "white",
               weight = 1,
               smoothFactor = .3,
@@ -246,7 +266,7 @@ conditions_map <- leaflet() %>%
                 color = "yellow"),
               group = "Bacterial Dermatitis"
   ) %>%
-  addPolygons(data = contact_dermatitis_states,
+  addPolygons(data = states_contact_dermatitis,
               color = "white",
               weight = 1,
               smoothFactor = .3,
@@ -261,7 +281,7 @@ conditions_map <- leaflet() %>%
                 color = "green"),
               group = "Contact Dermatitis"
   ) %>%
-  addPolygons(data = dermatitis_states,
+  addPolygons(data = states_dermatitis,
               color = "white",
               weight = 1,
               smoothFactor = .3,
@@ -276,7 +296,7 @@ conditions_map <- leaflet() %>%
                 color = "purple"),
               group = "Dermatitis"
   ) %>%
-  addPolygons(data = hot_spots_states,
+  addPolygons(data = states_hot_spots,
               color = "white",
               weight = 1,
               smoothFactor = .3,
@@ -291,19 +311,19 @@ conditions_map <- leaflet() %>%
                 color = "orange"),
               group = "Hot Spots"
   ) %>%
-  addLegend(pal = paletteNum_atopy, values = atopy_states$count,
+  addLegend(pal = paletteNum_atopy, values = states_atopy$count,
             title = '<small>Number of dogs with atopy per state</small>',
             position = 'bottomleft',  group = "Atopy") %>%
-  addLegend(pal = paletteNum_bacterial_dermatitis, values = bacterial_dermatitis_states$count,
+  addLegend(pal = paletteNum_bacterial_dermatitis, values = states_bacterial_dermatitis$count,
             title = '<small>Number of dogs with bacterial dermatitis per state</small>',
             position = 'bottomleft',  group = "Bacterial Dermatitis") %>%
-  addLegend(pal = paletteNum_contact_dermatitis, values = contact_dermatitis_states$count,
+  addLegend(pal = paletteNum_contact_dermatitis, values = states_contact_dermatitis$count,
             title = '<small>Number of dogs with contact dermatitis per state</small>',
             position = 'bottomleft', group = "Contact Dermatitis") %>%
-  addLegend(pal = paletteNum_dermatitis, values = dermatitis_states$count,
+  addLegend(pal = paletteNum_dermatitis, values = states_dermatitis$count,
             title = '<small>Number of dogs with dermatitis per state</small>',
             position = 'bottomleft', group = "Dermatitis") %>%
-  addLegend(pal = paletteNum_hot_spots, values = hot_spots_states$count,
+  addLegend(pal = paletteNum_hot_spots, values = states_hot_spots$count,
             title = '<small>Number of dogs with hot spots per state</small>',
             position = 'bottomleft', group = "Hot Spots") %>%
   addLayersControl(overlayGroups = c("Atopy", "Bacterial Dermatitis", "Contact Dermatitis", "Dermatitis", "Hot Spots"),
