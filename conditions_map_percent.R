@@ -9,12 +9,14 @@ library(zipcodeR)
 library(stringr)
 library(htmlwidgets)
 
-#datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
-
-setwd('C:/Users/AroRoseman/OneDrive - Morris Animal Foundation/Desktop/Projects/grls-conditions-map')
-
 #Import data
-conditions <- read_csv("./data/input/CONDITIONSFINAL.csv")
+#(note: make sure to set the correct file path for your system)
+Sys.setenv(CONDITIONS_MAP_DATA_DIR = "C:/Users/AroRoseman/OneDrive - Morris Animal Foundation/Desktop/Projects/grls-conditions-map/data/input")
+
+datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
+file_path <- file.path(datadir, "CONDITIONSFINAL.CSV")
+
+conditions <- read_csv(file_path)
 conditions <- conditions %>% filter(row_number() <= n()-1)
 
 #Remove NAs in state
