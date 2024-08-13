@@ -10,11 +10,8 @@ library(stringr)
 library(htmlwidgets)
 
 #Import data
-#(note: make sure to set the correct file path for your system)
-Sys.setenv(CONDITIONS_MAP_DATA_DIR = "C:/Users/AroRoseman/OneDrive - Morris Animal Foundation/Desktop/Projects/grls-conditions-map/data/input")
-
 datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
-file_path <- file.path(datadir, "CONDITIONSFINAL.CSV")
+file_path <- file.path(datadir, "input/CONDITIONSFINAL.CSV")
 
 conditions <- read_csv(file_path)
 conditions <- conditions %>% filter(row_number() <= n()-1)
@@ -346,4 +343,6 @@ conditions_map_percent <- leaflet() %>%
 conditions_map_percent
 
 #Save widget
-saveWidget(conditions_map_percent, file = "./data/output/conditions_map_percent.html")
+file_path_out <- file.path(datadir, "output/conditions_map_percent.html")
+
+saveWidget(conditions_map_percent, file = file_path_out)
