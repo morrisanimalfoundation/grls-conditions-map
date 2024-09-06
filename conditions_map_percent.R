@@ -339,7 +339,7 @@ conditions_map_percent <- leaflet() %>%
             title = '<small>Percentage of dogs with skin condition per state</small>',
             position = 'bottomleft') %>%
    addLayersControl(baseGroups = c("Atopy", "Bacterial Dermatitis", "Contact Dermatitis", "Dermatitis", "Hot Spots"),
-                   options = layersControlOptions(collapsed = TRUE))
+                   options = layersControlOptions(collapsed = FALSE))
 conditions_map_percent
 
 #Save widget
