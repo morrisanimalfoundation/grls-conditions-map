@@ -9,12 +9,12 @@ library(zipcodeR)
 library(stringr)
 library(htmlwidgets)
 
-#datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
-
-setwd('C:/Users/AroRoseman/OneDrive - Morris Animal Foundation/Desktop/Projects/grls-conditions-map')
-
 #Import data
-conditions <- read_csv("./data/input/CONDITIONSFINAL.csv")
+datadir <- Sys.getenv("CONDITIONS_MAP_DATA_DIR")
+file_path <- file.path(datadir, "input/CONDITIONSFINAL.CSV")
+
+conditions <- read_csv(file_path)
+conditions <- conditions %>% filter(row_number() <= n()-1)
 
 ###ATOPY
 
@@ -50,9 +50,6 @@ atopy_states$count[is.na(atopy_states$count)] <- 0
 states_atopy$count <- atopy_states$count
 states_atopy$count[is.na(states_atopy$count)] <- 0
 
-#Create color scheme for atopy
-paletteNum_atopy <- colorNumeric('Blues', domain = states_atopy$count)
-
 ### BACTERIAL DERMATITIS
 
 #Subset for bacterial dermatitis
@@ -86,9 +83,6 @@ bacterial_dermatitis_states$count[is.na(bacterial_dermatitis_states$count)] <- 0
 #Add count data to shape file
 states_bacterial_dermatitis$count <- bacterial_dermatitis_states$count
 states_bacterial_dermatitis$count[is.na(states_bacterial_dermatitis$count)] <- 0
-
-#Create color scheme for bacterial dermatitis
-paletteNum_bacterial_dermatitis <- colorNumeric('YlOrRd', domain = states_bacterial_dermatitis$count)
 
 ### CONTACT DERMATITIS
 
@@ -124,9 +118,6 @@ contact_dermatitis_states$count[is.na(contact_dermatitis_states$count)] <- 0
 states_contact_dermatitis$count <- contact_dermatitis_states$count
 states_contact_dermatitis$count[is.na(states_contact_dermatitis$count)] <- 0
 
-#Create color scheme for contact dermatitis
-paletteNum_contact_dermatitis <- colorNumeric('Greens', domain = states_contact_dermatitis$count)
-
 ### DERMATITIS
 
 #Subset for dermatitis
@@ -160,9 +151,6 @@ dermatitis_states$count[is.na(dermatitis_states$count)] <- 0
 #Add count data to shape file
 states_dermatitis$count <- dermatitis_states$count
 states_dermatitis$count[is.na(states_dermatitis$count)] <- 0
-
-#Create color scheme for dermatitis
-paletteNum_dermatitis <- colorNumeric('viridis', domain = states_dermatitis$count)
 
 ### HOT SPOTS
 
@@ -198,8 +186,11 @@ hot_spots_states$count[is.na(hot_spots_states$count)] <- 0
 states_hot_spots$count <- hot_spots_states$count
 states_hot_spots$count[is.na(states_hot_spots$count)] <- 0
 
-#Create color scheme for hot spots
-paletteNum_hot_spots <- colorNumeric('Oranges', domain = states_hot_spots$count)
+#Create color scheme
+#(note: hot spots has the largest range of all conditions, so the color scheme will be tied to hot spots)
+pal <- colorNumeric(
+  palette = "YlOrRd",
+  domain = states_hot_spots$count)
 
 #Create labels for map
 ##ATOPY
@@ -233,7 +224,7 @@ labels_hot_spots <- sprintf(
 ) %>% lapply(HTML)
 
 #Create map
-conditions_map <- leaflet() %>%
+conditions_map_number <- leaflet() %>%
   addTiles() %>%
   setView(lng = -96.25, lat = 39.50, zoom = 4) %>%
   addPolygons(data = states_atopy,
@@ -241,14 +232,14 @@ conditions_map <- leaflet() %>%
               weight = 1,
               smoothFactor = .3,
               fillOpacity = .75,
-              fillColor = ~paletteNum_atopy(count),
+              fillColor = ~pal(count),
               label = labels_atopy,
               labelOptions = labelOptions(
                 style = list(color = "gray30"),
                 textsize = "10px"),
               highlightOptions = highlightOptions(
                 weight = 3,
-                color = "dodgerblue"),
+                color = "#E35205"),
               group = "Atopy"
   ) %>%
   addPolygons(data = states_bacterial_dermatitis,
@@ -256,14 +247,14 @@ conditions_map <- leaflet() %>%
               weight = 1,
               smoothFactor = .3,
               fillOpacity = .75,
-              fillColor = ~paletteNum_bacterial_dermatitis(count),
+              fillColor = ~pal(count),
               label = labels_bacterial_dermatitis,
               labelOptions = labelOptions(
                 style = list(color = "gray30"),
                 textsize = "10px"),
               highlightOptions = highlightOptions(
                 weight = 3,
-                color = "yellow"),
+                color = "#E35205"),
               group = "Bacterial Dermatitis"
   ) %>%
   addPolygons(data = states_contact_dermatitis,
@@ -271,14 +262,14 @@ conditions_map <- leaflet() %>%
               weight = 1,
               smoothFactor = .3,
               fillOpacity = .75,
-              fillColor = ~paletteNum_contact_dermatitis(count),
+              fillColor = ~pal(count),
               label = labels_contact_dermatitis,
               labelOptions = labelOptions(
                 style = list(color = "gray30"),
                 textsize = "10px"),
               highlightOptions = highlightOptions(
                 weight = 3,
-                color = "green"),
+                color = "#E35205"),
               group = "Contact Dermatitis"
   ) %>%
   addPolygons(data = states_dermatitis,
@@ -286,14 +277,14 @@ conditions_map <- leaflet() %>%
               weight = 1,
               smoothFactor = .3,
               fillOpacity = .75,
-              fillColor = ~paletteNum_dermatitis(count),
+              fillColor = ~pal(count),
               label = labels_dermatitis,
               labelOptions = labelOptions(
                 style = list(color = "gray30"),
                 textsize = "10px"),
               highlightOptions = highlightOptions(
                 weight = 3,
-                color = "purple"),
+                color = "#E35205"),
               group = "Dermatitis"
   ) %>%
   addPolygons(data = states_hot_spots,
@@ -301,34 +292,36 @@ conditions_map <- leaflet() %>%
               weight = 1,
               smoothFactor = .3,
               fillOpacity = .75,
-              fillColor = ~paletteNum_hot_spots(count),
+              fillColor = ~pal(count),
               label = labels_hot_spots,
               labelOptions = labelOptions(
                 style = list(color = "gray30"),
                 textsize = "10px"),
               highlightOptions = highlightOptions(
                 weight = 3,
-                color = "orange"),
+                color = "#E35205"),
               group = "Hot Spots"
   ) %>%
-  addLegend(pal = paletteNum_atopy, values = states_atopy$count,
+  addLegend(pal = pal, values = states_atopy$count,
             title = '<small>Number of dogs with atopy per state</small>',
             position = 'bottomleft',  group = "Atopy") %>%
-  addLegend(pal = paletteNum_bacterial_dermatitis, values = states_bacterial_dermatitis$count,
+  addLegend(pal = pal, values = states_bacterial_dermatitis$count,
             title = '<small>Number of dogs with bacterial dermatitis per state</small>',
             position = 'bottomleft',  group = "Bacterial Dermatitis") %>%
-  addLegend(pal = paletteNum_contact_dermatitis, values = states_contact_dermatitis$count,
+  addLegend(pal = pal, values = states_contact_dermatitis$count,
             title = '<small>Number of dogs with contact dermatitis per state</small>',
             position = 'bottomleft', group = "Contact Dermatitis") %>%
-  addLegend(pal = paletteNum_dermatitis, values = states_dermatitis$count,
+  addLegend(pal = pal, values = states_dermatitis$count,
             title = '<small>Number of dogs with dermatitis per state</small>',
             position = 'bottomleft', group = "Dermatitis") %>%
-  addLegend(pal = paletteNum_hot_spots, values = states_hot_spots$count,
+  addLegend(pal = pal, values = states_hot_spots$count,
             title = '<small>Number of dogs with hot spots per state</small>',
             position = 'bottomleft', group = "Hot Spots") %>%
   addLayersControl(overlayGroups = c("Atopy", "Bacterial Dermatitis", "Contact Dermatitis", "Dermatitis", "Hot Spots"),
-                   options = layersControlOptions(collapsed = TRUE))
-conditions_map
+                   options = layersControlOptions(collapsed = FALSE))
+conditions_map_number
 
 #Save widget
-saveWidget(conditions_map, file = "./data/output/conditions_map.html")
+file_path_out <- file.path(datadir, "output/conditions_map_number.html")
+
+saveWidget(conditions_map_number, file = file_path_out)
